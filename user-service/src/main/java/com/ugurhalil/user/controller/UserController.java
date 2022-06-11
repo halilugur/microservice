@@ -28,9 +28,14 @@ public class UserController {
         return userFacade.getAllUser();
     }
 
-    @GetMapping("{id}")
+    @GetMapping("/{id}")
     private UserDTO getUserById(@PathVariable Long id) {
         return userFacade.getUserById(id);
+    }
+
+    @GetMapping("/{username}/check")
+    private UserDTO getUserByUsername(@PathVariable String username) {
+        return userFacade.getUserByUsername(username);
     }
 
     @PostMapping
@@ -38,7 +43,7 @@ public class UserController {
         return userFacade.add(userDTO);
     }
 
-    @PutMapping("{id}")
+    @PutMapping("/{id}")
     private UserDTO update(@RequestBody UserDTO userDTO, @PathVariable Long id) {
         if (!Objects.equals(id, userDTO.getId())) {
             throw new IllegalArgumentException("Please check your id.");
@@ -46,7 +51,7 @@ public class UserController {
         return userFacade.update(userDTO);
     }
 
-    @DeleteMapping("{id}")
+    @DeleteMapping("/{id}")
     private void deleteUserById(@PathVariable Long id) {
         userFacade.deleteUserById(id);
     }

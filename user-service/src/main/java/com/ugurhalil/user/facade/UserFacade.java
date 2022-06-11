@@ -7,6 +7,7 @@ import com.ugurhalil.user.service.UserService;
 import lombok.AllArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.hibernate.ObjectNotFoundException;
+import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 
 import java.util.List;
@@ -15,9 +16,9 @@ import java.util.List;
 @Service
 @AllArgsConstructor
 public class UserFacade {
-
     private final UserService userService;
     private final DataConverter dataConverter;
+    private final PasswordEncoder passwordEncoder;
 
     public List<UserDTO> getAllUser() {
         List<User> users = userService.getAllUser();
@@ -30,8 +31,10 @@ public class UserFacade {
     }
 
     public UserDTO add(UserDTO userDTO) {
-        User user = userService.save(dataConverter.map(userDTO, User.class));
-        return dataConverter.map(user, UserDTO.class);
+        User user = dataConverter.map(userDTO, User.class);
+        user.setPassword(passwordEncoder.encode(user.getPassword()));
+        User userSetPass = userService.save(user);
+        return dataConverter.map(userSetPass, UserDTO.class);
     }
 
     public UserDTO update(UserDTO userDTO) {
@@ -45,5 +48,10 @@ public class UserFacade {
     public void deleteUserById(Long id) {
         log.info(id + " has been deleted.");
         userService.deleteUserById(id);
+    }
+
+    public UserDTO getUserByUsername(String username) {
+        User user = userService.getUserByUsername(username).orElseThrow();
+        return dataConverter.map(user, UserDTO.class);
     }
 }

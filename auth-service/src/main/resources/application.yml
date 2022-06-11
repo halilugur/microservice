@@ -1,8 +1,8 @@
 server:
-  port: 9001
+  port: 8081
 spring:
   application:
-    name: delivery-service
+    name: auth-service
   datasource:
     url: jdbc:postgresql://localhost:5432/postgres
     username: postgres
@@ -16,6 +16,10 @@ spring:
     show-sql: true
     database: postgresql
     generate-ddl: true
+
+jwt:
+  secret: springboot
+  validity: 18000
 
 eureka:
   client:
