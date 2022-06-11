@@ -2,13 +2,16 @@ package com.ugurhalil.delivery.facade;
 
 import com.ugurhalil.common.constant.DeliveryStatus;
 import com.ugurhalil.common.dto.DeliveryDTO;
+import com.ugurhalil.common.dto.UserDTO;
 import com.ugurhalil.common.entity.Delivery;
+import com.ugurhalil.common.entity.User;
 import com.ugurhalil.common.util.DataConverter;
 import com.ugurhalil.delivery.service.DeliveryService;
 import lombok.AllArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.hibernate.ObjectNotFoundException;
 import org.springframework.stereotype.Service;
+import org.springframework.web.client.RestTemplate;
 
 import java.util.List;
 
@@ -19,6 +22,7 @@ public class DeliveryFacade {
 
     private final DeliveryService deliveryService;
     private final DataConverter dataConverter;
+    private final RestTemplate restTemplate;
 
     public List<DeliveryDTO> getAll() {
         List<Delivery> deliveries = deliveryService.getAll();
@@ -32,8 +36,13 @@ public class DeliveryFacade {
 
     public DeliveryDTO addDelivery(DeliveryDTO deliveryDTO) {
         deliveryDTO.setStatus(DeliveryStatus.CREATED);
-        Delivery delivery = deliveryService.save(dataConverter.map(deliveryDTO, Delivery.class));
-        return dataConverter.map(delivery, DeliveryDTO.class);
+        Delivery delivery = dataConverter.map(deliveryDTO, Delivery.class);
+        UserDTO userDTO = restTemplate.getForObject("http://user-service/users/{id}",
+                UserDTO.class,
+                deliveryDTO.getUser().getId());
+        delivery.setUser(dataConverter.map(userDTO, User.class));
+        Delivery deliveryWithUser = deliveryService.save(delivery);
+        return dataConverter.map(deliveryWithUser, DeliveryDTO.class);
     }
 
     public DeliveryDTO updateDelivery(DeliveryDTO deliveryDTO) {

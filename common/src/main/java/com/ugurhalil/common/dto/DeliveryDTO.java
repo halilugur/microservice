@@ -12,6 +12,6 @@ import lombok.NoArgsConstructor;
 @NoArgsConstructor
 public class DeliveryDTO {
     private Long id;
-    private UserDTO userDTO;
+    private UserDTO user;
     private DeliveryStatus status;
 }

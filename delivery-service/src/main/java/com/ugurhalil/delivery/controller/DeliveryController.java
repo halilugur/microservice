@@ -19,7 +19,7 @@ import java.util.Objects;
 @Slf4j
 @RestController
 @AllArgsConstructor
-@RequestMapping("/delivery")
+@RequestMapping("/deliveries")
 public class DeliveryController {
     private DeliveryFacade deliveryFacade;
 

@@ -1,15 +1,15 @@
 server:
-  port: 9002
+  port: 9001
 spring:
   application:
-    name: user-service
+    name: delivery-service
   datasource:
     url: jdbc:postgresql://localhost:5432/postgres
     username: postgres
     password: root
   jpa:
     hibernate:
-      ddl-auto: create-drop
+      ddl-auto: none
     properties:
       hibernate:
         dialect: org.hibernate.dialect.PostgreSQLDialect
