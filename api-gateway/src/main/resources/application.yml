@@ -6,6 +6,8 @@ jwt:
   validity: 18000
 
 spring:
+  main:
+    web-application-type: reactive
   application:
     name: api-gateway
   cloud:
