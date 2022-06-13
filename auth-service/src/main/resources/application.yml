@@ -18,8 +18,11 @@ spring:
     generate-ddl: true
 
 jwt:
+  prefix: Bearer
+  expiration: 72000
   secret: springboot
-  validity: 18000
+  authorities:
+    key: authorities
 
 eureka:
   client:

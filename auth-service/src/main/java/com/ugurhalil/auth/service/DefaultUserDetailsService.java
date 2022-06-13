@@ -19,7 +19,7 @@ import org.springframework.web.client.RestTemplate;
 
 @Service
 @AllArgsConstructor
-public class JwtUserDetailsService implements UserDetailsService {
+public class DefaultUserDetailsService implements UserDetailsService {
     private final RestTemplate restTemplate;
 
     @Override

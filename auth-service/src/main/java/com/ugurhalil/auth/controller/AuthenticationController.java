@@ -1,44 +1,46 @@
 package com.ugurhalil.auth.controller;
 
-import com.ugurhalil.auth.model.JwtRequest;
-import com.ugurhalil.auth.model.JwtResponse;
-import com.ugurhalil.auth.service.JwtUserDetailsService;
-import com.ugurhalil.auth.util.JwtTokenUtil;
+import com.ugurhalil.auth.model.UserCredentials;
+import com.ugurhalil.auth.model.TokenResponse;
+import com.ugurhalil.auth.service.DefaultUserDetailsService;
+import com.ugurhalil.auth.util.DefaultTokenUtil;
 import lombok.AllArgsConstructor;
-import org.springframework.http.ResponseEntity;
-import org.springframework.security.authentication.AuthenticationManager;
-import org.springframework.security.authentication.BadCredentialsException;
-import org.springframework.security.authentication.DisabledException;
-import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
+import org.springframework.http.HttpStatus;
 import org.springframework.security.core.userdetails.UserDetails;
+import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestMethod;
 import org.springframework.web.bind.annotation.RestController;
+import org.springframework.web.server.ResponseStatusException;
+
+import java.util.Objects;
 
 @RestController
 @AllArgsConstructor
 public class AuthenticationController {
-    private final AuthenticationManager authenticationManager;
-    private final JwtTokenUtil jwtTokenUtil;
-    private final JwtUserDetailsService userDetailsService;
+    private final DefaultTokenUtil defaultTokenUtil;
+    private final DefaultUserDetailsService defaultUserDetailsService;
+    private final PasswordEncoder passwordEncoder;
 
     @RequestMapping(value = "/auth", method = RequestMethod.POST)
-    public ResponseEntity<?> createAuthenticationToken(@RequestBody JwtRequest authenticationRequest) throws Exception {
-        authenticate(authenticationRequest.getUsername(), authenticationRequest.getPassword());
-        final UserDetails userDetails = userDetailsService
-                .loadUserByUsername(authenticationRequest.getUsername());
-        final String token = jwtTokenUtil.generateToken(userDetails);
-        return ResponseEntity.ok(new JwtResponse(token));
-    }
-
-    private void authenticate(String username, String password) throws Exception {
-        try {
-            authenticationManager.authenticate(new UsernamePasswordAuthenticationToken(username, password));
-        } catch (DisabledException e) {
-            throw new Exception("USER_DISABLED", e);
-        } catch (BadCredentialsException e) {
-            throw new Exception("INVALID_CREDENTIALS", e);
+    public TokenResponse createAuthenticationToken(@RequestBody UserCredentials userCredentials) {
+        if (Objects.isNull(userCredentials)) {
+            throw new ResponseStatusException(HttpStatus.UNAUTHORIZED, "Invalid user credentials");
         }
+
+        UserDetails userDetails = defaultUserDetailsService.loadUserByUsername(userCredentials.getUsername());
+        if (Objects.isNull(userDetails)) {
+            throw new ResponseStatusException(HttpStatus.UNAUTHORIZED, "Invalid user credentials");
+        }
+
+        String entryPassword = userCredentials.getPassword();
+        String dbPassword = userDetails.getPassword();
+
+        if (passwordEncoder.matches(entryPassword, dbPassword)) {
+            final String token = defaultTokenUtil.generateToken(userDetails);
+            return new TokenResponse(token, defaultTokenUtil.getPrefix(), defaultTokenUtil.getExpiration());
+        }
+        throw new ResponseStatusException(HttpStatus.UNAUTHORIZED, "Invalid user credentials");
     }
 }

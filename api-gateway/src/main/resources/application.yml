@@ -1,10 +1,6 @@
 server:
   port: 8762
 
-jwt:
-  secret: springboot
-  validity: 18000
-
 spring:
   main:
     web-application-type: reactive
@@ -25,6 +21,13 @@ spring:
           uri: lb://user-service
           predicates:
             - Path=/users/**
+jwt:
+  prefix: Bearer
+  expiration: 72000
+  secret: springboot
+  authorities:
+    key: authorities
+
 eureka:
   client:
     fetch-registry: true
