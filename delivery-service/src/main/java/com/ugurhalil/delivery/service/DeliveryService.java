@@ -1,6 +1,7 @@
 package com.ugurhalil.delivery.service;
 
 import com.ugurhalil.common.entity.Delivery;
+import com.ugurhalil.common.entity.User;
 import com.ugurhalil.delivery.repository.DeliveryRepository;
 import lombok.AllArgsConstructor;
 import org.springframework.stereotype.Service;
@@ -15,6 +16,10 @@ public class DeliveryService {
 
     public List<Delivery> getAll() {
         return deliveryRepository.findAll();
+    }
+
+    public List<Delivery> getDeliveriesByUser(User user) {
+        return deliveryRepository.findDeliveryByUser(user);
     }
 
     public Optional<Delivery> getDeliveryById(Long id) {

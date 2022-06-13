@@ -14,4 +14,5 @@ public class DeliveryDTO {
     private Long id;
     private UserDTO user;
     private DeliveryStatus status;
+    private String destination;
 }

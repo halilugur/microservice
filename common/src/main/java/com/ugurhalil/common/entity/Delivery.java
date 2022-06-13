@@ -21,4 +21,5 @@ public class Delivery {
     @OneToOne(fetch = FetchType.EAGER)
     private User user;
     private DeliveryStatus status;
+    private String destination;
 }

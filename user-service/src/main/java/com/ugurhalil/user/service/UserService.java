@@ -1,5 +1,6 @@
 package com.ugurhalil.user.service;
 
+import com.ugurhalil.common.constant.UserRole;
 import com.ugurhalil.common.entity.User;
 import com.ugurhalil.user.repository.UserRepository;
 import lombok.AllArgsConstructor;
@@ -15,6 +16,10 @@ public class UserService {
 
     public List<User> getAllUser() {
         return userRepository.findAll();
+    }
+
+    public List<User> getUsersByRole(UserRole userRole) {
+        return userRepository.findUsersByRole(userRole);
     }
 
     public Optional<User> getUserById(Long id) {

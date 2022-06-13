@@ -3,6 +3,7 @@ package com.ugurhalil.gateway.auth;
 import lombok.AllArgsConstructor;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
+import org.springframework.http.HttpMethod;
 import org.springframework.http.HttpStatus;
 import org.springframework.security.config.annotation.web.reactive.EnableWebFluxSecurity;
 import org.springframework.security.config.web.server.ServerHttpSecurity;
@@ -34,7 +35,12 @@ public class SecurityConfiguration {
                 .authorizeExchange()
                 .pathMatchers("/auth/**").permitAll()
                 .pathMatchers("/users/**").hasRole("USER")
-                .pathMatchers("/deliveries/**").hasRole("ADMIN")
+                .pathMatchers("/couriers/**").hasRole("ADMIN")
+                .pathMatchers(HttpMethod.POST, "/deliveries/**/status").hasAnyRole("COURIER", "ADMIN")
+                .pathMatchers(HttpMethod.PATCH, "/deliveries/{id}").hasRole("ADMIN")
+                .pathMatchers(HttpMethod.GET, "/deliveries/user/**").hasRole("COURIER")
+                .pathMatchers(HttpMethod.GET, "/deliveries").hasAnyRole("ADMIN", "COURIER")
+                .pathMatchers("/deliveries/**").hasAnyRole("USER")
                 .anyExchange().authenticated()
                 .and().build();
     }

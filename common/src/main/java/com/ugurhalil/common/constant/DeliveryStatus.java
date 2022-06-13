@@ -4,4 +4,5 @@ public enum DeliveryStatus {
     CREATED,
     DELIVERED,
     PROGRESS,
+    CANCEL
 }
