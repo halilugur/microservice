@@ -27,7 +27,4 @@ This application created for a task. General contains spring boot applications.
 
 ## Structure
 
-![alt text](https://github.com/halilugur/microservice/assets/Diagram.png?raw=true)
-
-
-
+![Diagram of Architecture](https://github.com/halilugur/microservice/blob/master/assets/Diagram.png "Microservice Diagram")
